@@ -52,9 +52,9 @@ void Game::run()
 
 void Game::processEvents()
 {
-    //ge::Events event;
+    ge::Events event;
 
-    //std::map<Uint32, std::vector<int>> inputs;
+    std::map<Uint32, std::vector<int>> inputs;
 
     SDL_Event e;
     while(SDL_PollEvent(&e) != 0)
@@ -65,27 +65,27 @@ void Game::processEvents()
             break;
         }
 
-        //inputs[e.type].push_back(e.key.keysym.sym);
+        inputs[e.type].push_back(e.key.keysym.sym);
     }
 
-    // for (std::pair<Uint32 const, std::vector<int>> & input : inputs)
-    // {
-    //     switch (input.first)
-    //     {
-    //     case SDL_KEYDOWN:
+    for (std::pair<Uint32 const, std::vector<int>> & input : inputs)
+    {
+        switch (input.first)
+        {
+        case SDL_KEYDOWN:
             
-    //         // if (input.second == SDLK_d)
-    //         // {
+            // if (input.second == SDLK_d)
+            // {
 
-    //         // }
-    //         break;
-    //     case SDL_KEYUP:
-    //         break;
+            // }
+            break;
+        case SDL_KEYUP:
+            break;
         
-    //     default:
-    //         break;
-    //     }
-    // }
+        default:
+            break;
+        }
+    }
 
     // // Handle input to Player
     // m_player->handleInput(event);
