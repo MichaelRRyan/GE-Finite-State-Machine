@@ -2,9 +2,13 @@
 #include <stdio.h>
 //#include "IdlePlayerState.h"
 
+Player::Player()
+{
 
-Player::Player(AnimatedSprite const & t_sprite) : 
-    m_animated_sprite(sprite)
+}
+
+Player::Player(AnimatedSprite * t_sprite) : 
+    m_animatedSprite{ t_sprite }
 {
 	// Set the Player to Default to IdlePlayer State 
 	// and Enter that State
@@ -24,24 +28,29 @@ void Player::handleInput(ge::Events t_event) {
 }
 
 void Player::update() {
-	m_animated_sprite.update();
-	m_state->update(*this);
+	m_animatedSprite->update();
+
+	if (m_state)
+		m_state->update(*this);
 }
 
 AnimatedSprite& Player::getAnimatedSprite() {
-	return m_animated_sprite;
+	return *m_animatedSprite;
 }
 
 AnimatedSprite& Player::getAnimatedSpriteFrame() {
-	int frame = m_animated_sprite.getCurrentFrame();
-	m_animated_sprite.setTextureRect(m_animated_sprite.getFrame(frame));
-	return m_animated_sprite;
+	return *m_animatedSprite;
 }
 
-void Player::setAnimatedSprite(AnimatedSprite& animated_sprite) {
-	this->m_animated_sprite = animated_sprite;
+void Player::setAnimatedSprite(AnimatedSprite * animated_sprite) {
+	this->m_animatedSprite = animated_sprite;
 }
 
 PlayerState* Player::getPlayerState() { return this->m_state; }
 
 void Player::setPlayerState(PlayerState* state) { this->m_state = state; }
+
+void Player::render(SDL_Renderer * t_renderer)
+{
+    m_animatedSprite->render(t_renderer);
+}

@@ -1,9 +1,14 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <iostream>
+#include <map>
+#include <vector>
 #include "GameObjects/Player.h"
+#include "Utils/Utility.h"
+#include "Utils/Defines.h"
 
 const int SCREEN_WIDTH = 980;
 const int SCREEN_HEIGHT = 600;
@@ -30,6 +35,9 @@ private:
 	SDL_Window* m_window = NULL;
 	
 	SDL_Renderer* m_renderer;
+
+    Player * m_player;
+    SDL_Texture * m_playerTexture;
 
 };
 

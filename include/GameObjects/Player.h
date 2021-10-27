@@ -10,17 +10,22 @@ class Player
 private:
 
 	PlayerState * m_state;
-	AnimatedSprite m_animated_sprite;
+	AnimatedSprite * m_animatedSprite;
 
 public:
-	Player(AnimatedSprite const &);
+
+	Player();
+	Player(AnimatedSprite * t_sprite);
 	virtual void handleInput(ge::Events t_event);
 	virtual void update();
 	AnimatedSprite & getAnimatedSprite();
 	AnimatedSprite & getAnimatedSpriteFrame();
-	void setAnimatedSprite(AnimatedSprite & t_animatedSprite);
+	void setAnimatedSprite(AnimatedSprite * t_animatedSprite);
 	PlayerState * getPlayerState();
 	void setPlayerState(PlayerState * t_state);
+
+    void render(SDL_Renderer * t_renderer);
+
 };
 
 #endif // !PLAYER_H

@@ -1,20 +1,22 @@
-#include <AnimatedSprite.h>
+#include "Animation/AnimatedSprite.h"
 
 AnimatedSprite::AnimatedSprite() : 
 	m_currentFrame(0),
-	m_time(seconds(0.5f)),
+	m_time(0.5f),
 	m_loop(true),
-	m_played(false)
+	m_played(false),
+	m_x{ 0.0f },
+	m_y{ 0.0f }
 {
 }
 
-AnimatedSprite::AnimatedSprite(SDL_Texture const * t_texture) : 
+AnimatedSprite::AnimatedSprite(SDL_Texture * t_texture) : 
 	AnimatedSprite()
 {
 	m_texture = t_texture;
 }
 
-AnimatedSprite::AnimatedSprite(SDL_Texture const * t_texture, SDL_Rect const * t_texRect) : 
+AnimatedSprite::AnimatedSprite(SDL_Texture * t_texture, SDL_Rect const & t_texRect) : 
 	AnimatedSprite(t_texture)
 {
 	m_frames.push_back(t_texRect);
@@ -24,9 +26,9 @@ AnimatedSprite::~AnimatedSprite()
 {
 }
 
-const sf::Stopwatch & AnimatedSprite::getStopwatch()
+const util::Stopwatch & AnimatedSprite::getStopwatch()
 {
-	return m_clock;
+	return m_stopwatch;
 }
 
 float const AnimatedSprite::getTime()
@@ -54,12 +56,12 @@ void AnimatedSprite::clearFrames()
 	}
 }
 
-SDL_Rect const * AnimatedSprite::getFrame(int t_frame)
+SDL_Rect const & AnimatedSprite::getFrame(int t_frame)
 {
 	return m_frames[t_frame];
 }
 
-void AnimatedSprite::addFrame(SDL_Rect const * t_frameRect)
+void AnimatedSprite::addFrame(SDL_Rect const & t_frameRect)
 {
 	m_frames.push_back(t_frameRect);
 }
@@ -71,7 +73,7 @@ const int AnimatedSprite::getCurrentFrame()
 
 void AnimatedSprite::setLooped(bool t_loop)
 {
-	m_loop = loop;
+	m_loop = t_loop;
 }
 
 const bool AnimatedSprite::getLooped()
@@ -81,7 +83,7 @@ const bool AnimatedSprite::getLooped()
 
 void AnimatedSprite::setPlayed(bool t_played)
 {
-	m_played = played;
+	m_played = t_played;
 }
 
 const bool AnimatedSprite::getPlayed()
@@ -112,20 +114,20 @@ void AnimatedSprite::update()
 	
 }
 
-void setPosition(float t_x, float t_y)
+void AnimatedSprite::setPosition(float t_x, float t_y)
 {
 	m_x = t_x;
 	m_y = t_y;
 }
 
-SDL_Texture * getTexture()
+SDL_Texture * AnimatedSprite::getTexture()
 {
 	return m_texture;
 }
 
-void render(SDL_Renderer * t_renderer)
+void AnimatedSprite::render(SDL_Renderer * t_renderer)
 {
-	SDL_Rect * frame = getFrame(getCurrentFrame());
-	SDL_Rect destRect = { m_x, m_y, frame->w, frame->h };
-	SDL_RenderCopy(t_renderer, m_texture, *frame, &destRect);
+	SDL_Rect frame = getFrame(getCurrentFrame());
+	SDL_Rect destRect = { static_cast<int>(m_x), static_cast<int>(m_y), frame.w, frame.h };
+	SDL_RenderCopy(t_renderer, m_texture, &frame, &destRect);
 }

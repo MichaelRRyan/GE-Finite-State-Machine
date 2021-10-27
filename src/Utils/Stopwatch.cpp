@@ -1,5 +1,7 @@
 #include "Utils/Stopwatch.h"
 
+using namespace util;
+
 Stopwatch::Stopwatch() :
     m_startTicks{ 0u },
     m_endTicks{ new Uint32{ 0u } }
@@ -19,7 +21,7 @@ void Stopwatch::stop()
 
 Uint32 Stopwatch::getTicks()
 {
-    if (m_endTime)
+    if (m_endTicks)
         return *m_endTicks - m_startTicks;
     else
         return SDL_GetTicks() - m_startTicks;

@@ -3,23 +3,26 @@
 
 #include <SDL_Timer.h>
 
-class Stopwatch
+namespace util
 {
-public:
+    class Stopwatch
+    {
+    public:
 
-    Stopwatch();
+        Stopwatch();
 
-    void start();
-    void stop();
+        void start();
+        void stop();
 
-    Uint32 getTicks();
-    float getSeconds();
+        Uint32 getTicks();
+        float getSeconds();
 
-private:
+    private:
 
-    Uint32 m_startTicks;
-    Uint32 * m_endTicks;
+        Uint32 m_startTicks;
+        Uint32 * m_endTicks;
 
-};
+    };
+}
 
 #endif // !STOPWATCH_H

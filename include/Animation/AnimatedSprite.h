@@ -8,17 +8,18 @@
 
 class AnimatedSprite {
 public:
+
 	AnimatedSprite();
-	AnimatedSprite(SDL_Texture const & t_texture);
-	AnimatedSprite(SDL_Texture const & t_texture, const SDL_Rect & t_texRect);
+	AnimatedSprite(SDL_Texture * t_texture);
+	AnimatedSprite(SDL_Texture * t_texture, SDL_Rect const & t_texRect);
 	~AnimatedSprite();
 
-	const Stopwatch & getStopwatch();
+	const util::Stopwatch & getStopwatch();
 	const float getTime();
 	const std::vector<SDL_Rect> & getFrames();
 	void clearFrames();
 	const SDL_Rect & getFrame(int t_frame);
-	void addFrame(const SDL_Rect & t_frameRect);
+	void addFrame(SDL_Rect const & t_frameRect);
 	const int getCurrentFrame();
 	void setLooped(bool t_loop);
 	const bool getLooped();
@@ -35,7 +36,7 @@ public:
 
 private:
 
-	Stopwatch m_stopwatch;
+	util::Stopwatch m_stopwatch;
 	float m_time;
 	std::vector<SDL_Rect> m_frames;
 	unsigned int m_currentFrame;

@@ -14,7 +14,7 @@ SRC_DIR		:= ./src
 
 TARGET		:= ${BUILD_DIR}/app
 
-SRC			:= ${SRC_DIR}/*.cpp
+SRC			:= ${SRC_DIR}/**/*.cpp ${SRC_DIR}/*.cpp
 
 all			:= build
 
