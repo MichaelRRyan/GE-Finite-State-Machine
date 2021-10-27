@@ -2,11 +2,6 @@
 #include <stdio.h>
 #include "FSM/IdlePlayerState.h"
 
-Player::Player()
-{
-
-}
-
 Player::Player(AnimatedSprite * t_sprite) : 
     m_animatedSprite{ t_sprite }
 {

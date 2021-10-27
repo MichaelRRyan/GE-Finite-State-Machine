@@ -8,6 +8,7 @@ AnimatedSprite::AnimatedSprite() :
 	m_x{ 0.0f },
 	m_y{ 0.0f }
 {
+	m_stopwatch.start();
 }
 
 AnimatedSprite::AnimatedSprite(SDL_Texture * t_texture) : 

@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <vector>
+#include <iostream>
 #include "Utils/Stopwatch.h"
 
 class AnimatedSprite {

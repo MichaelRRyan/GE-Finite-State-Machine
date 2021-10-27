@@ -14,7 +14,6 @@ private:
 
 public:
 
-	Player();
 	Player(AnimatedSprite * t_sprite);
 	~Player();
 	virtual void handleInput(ge::Events t_event);
