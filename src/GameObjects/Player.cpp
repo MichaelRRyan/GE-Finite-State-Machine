@@ -16,7 +16,17 @@ Player::Player(AnimatedSprite * t_sprite) :
 	//m_state->enter(*this);
 }
 
-void Player::handleInput(ge::Events t_event) {
+Player::~Player()
+{
+	delete m_animatedSprite;
+
+	if (m_state) delete m_state;
+}
+
+void Player::handleInput(ge::Events t_event)
+{
+	if (m_state == nullptr) return;
+
 	PlayerState * state = m_state->handleInput(t_event);
 
 	if (state != NULL) {

@@ -54,7 +54,7 @@ void Game::processEvents()
 {
     ge::Events event;
 
-    std::map<Uint32, std::vector<int>> inputs;
+    std::map<Uint32, std::set<int>> inputs;
 
     SDL_Event e;
     while(SDL_PollEvent(&e) != 0)
@@ -65,19 +65,34 @@ void Game::processEvents()
             break;
         }
 
-        inputs[e.type].push_back(e.key.keysym.sym);
+        inputs[e.type].insert(e.key.keysym.sym);
     }
 
-    for (std::pair<Uint32 const, std::vector<int>> & input : inputs)
+    for (std::pair<Uint32 const, std::set<int>> & input : inputs)
     {
         switch (input.first)
         {
         case SDL_KEYDOWN:
             
-            // if (input.second == SDLK_d)
-            // {
+            // Died Event
+            if (input.second.count(SDLK_d) > 0)
+            {
+                //DEBUG_MSG("ge::Events::Event::DIED_EVENT");
+                event.setCurrent(ge::Events::Event::DIED_EVENT);
+            }
+            // Revieved Event
+            else if (input.second.count(SDLK_r) > 0)
+            {
+                //DEBUG_MSG("ge::Events::Event::REVIVED_EVENT");
+                event.setCurrent(ge::Events::Event::REVIVED_EVENT);
+            }
+            // Running attack
+            else if (input.second.count(SDLK_z) > 0 && input.second.count(SDLK_RIGHT) > 0)
+            {
+                //DEBUG_MSG("ge::Events::Event::ATTACK_START");
+                event.setCurrent(ge::Events::Event::ATTACK_START_EVENT);
+            }
 
-            // }
             break;
         case SDL_KEYUP:
             break;
@@ -87,8 +102,8 @@ void Game::processEvents()
         }
     }
 
-    // // Handle input to Player
-    // m_player->handleInput(event);
+    // Handle input to Player
+    m_player->handleInput(event);
 
     // switch (event.type)
     // {
@@ -314,6 +329,10 @@ void Game::render()
 
 void Game::cleanUp()
 {
+    delete m_player;
+
+    SDL_DestroyTexture(m_playerTexture);
+
     //Destroy window
 	SDL_DestroyWindow( m_window );
 
