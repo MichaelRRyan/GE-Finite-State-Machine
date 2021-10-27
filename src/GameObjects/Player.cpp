@@ -1,6 +1,6 @@
 #include "GameObjects/Player.h"
 #include <stdio.h>
-//#include "IdlePlayerState.h"
+#include "FSM/IdlePlayerState.h"
 
 Player::Player()
 {
@@ -12,8 +12,8 @@ Player::Player(AnimatedSprite * t_sprite) :
 {
 	// Set the Player to Default to IdlePlayer State 
 	// and Enter that State
-	//m_state = new IdlePlayerState();
-	//m_state->enter(*this);
+	m_state = new IdlePlayerState();
+	m_state->enter(*this);
 }
 
 Player::~Player()

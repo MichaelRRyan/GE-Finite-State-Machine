@@ -30,7 +30,6 @@ Game::Game() :
 
     // Setup Players Default Animated Sprite.
     m_player = new Player{ new AnimatedSprite{ m_playerTexture } };
-    m_player->getAnimatedSprite().addFrame({ 3900, 0, 232, 439 });
 }
 
 Game::~Game()
