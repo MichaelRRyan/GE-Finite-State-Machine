@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "Animation/AnimatedSprite.h"
 
 const int SCREEN_WIDTH = 980;
 const int SCREEN_HEIGHT = 600;
