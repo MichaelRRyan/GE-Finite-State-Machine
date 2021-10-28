@@ -7,8 +7,8 @@ Player::Player(AnimatedSprite * t_sprite) :
 {
 	// Set the Player to Default to IdlePlayer State 
 	// and Enter that State
-	m_state = new IdlePlayerState();
-	m_state->enter(*this);
+	m_state = new IdlePlayerState(*this);
+	m_state->enter();
 }
 
 Player::~Player()
@@ -22,21 +22,19 @@ void Player::handleInput(ge::Events t_event)
 {
 	if (m_state == nullptr) return;
 
-	PlayerState * state = m_state->handleInput(t_event);
+	Command * command = m_state->handleInput(t_event);
 
-	if (state != NULL) {
-		m_state->exit(*this);
-		delete m_state;
-		m_state = state;
-		m_state->enter(*this);
+	if (command != nullptr) 
+	{
+		command->execute();
+		delete command;
 	}
 }
 
 void Player::update() {
 	m_animatedSprite->update();
 
-	if (m_state)
-		m_state->update(*this);
+	if (m_state) m_state->update();
 }
 
 AnimatedSprite& Player::getAnimatedSprite() {
@@ -53,7 +51,17 @@ void Player::setAnimatedSprite(AnimatedSprite * animated_sprite) {
 
 PlayerState* Player::getPlayerState() { return this->m_state; }
 
-void Player::setPlayerState(PlayerState* state) { this->m_state = state; }
+void Player::setPlayerState(PlayerState* state)
+{ 
+	if (m_state)
+	{
+		m_state->exit();
+		delete m_state;
+	}
+
+	m_state = state;
+	m_state->enter();
+}
 
 void Player::render(SDL_Renderer * t_renderer)
 {
