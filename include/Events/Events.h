@@ -5,9 +5,6 @@ namespace ge {
 	class Events
 	{
 	public:
-		Events();
-		~Events();
-
 		enum class Event
 		{
 			NONE,
@@ -32,6 +29,10 @@ namespace ge {
 			REVIVED_EVENT,
 			Count
 		};
+
+		Events();
+		Events(Event t_current);
+		~Events();
 
 		void setCurrent(Event);
 		Event getCurrent();

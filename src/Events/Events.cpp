@@ -4,6 +4,12 @@ ge::Events::Events()
 {
 	m_current = Event::NONE;
 }
+
+ge::Events::Events(ge::Events::Event t_current)
+{
+	m_current = t_current;
+}
+
 ge::Events::~Events() {}
 
 void ge::Events::setCurrent(ge::Events::Event event) {

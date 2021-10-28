@@ -51,11 +51,10 @@ void Game::run()
 
 void Game::processEvents()
 {
-    ge::Events event;
+    Uint8 const * keystate = SDL_GetKeyboardState(NULL);
 
-    std::map<Uint32, std::set<int>> inputs;
-
-    SDL_Event e;
+    ge::Events event; // Finite state machine event.
+    SDL_Event e; // Input event.
     while(SDL_PollEvent(&e) != 0)
     {
         if (e.type == SDL_QUIT)
@@ -64,178 +63,18 @@ void Game::processEvents()
             break;
         }
 
-        inputs[e.type].insert(e.key.keysym.sym);
-    }
-
-    for (std::pair<Uint32 const, std::set<int>> & input : inputs)
-    {
-        switch (input.first)
+        if (keystate)
         {
-        case SDL_KEYDOWN:
-            
-            // Died Event
-            if (input.second.count(SDLK_d) > 0)
+            switch (e.type)
             {
-                //DEBUG_MSG("ge::Events::Event::DIED_EVENT");
-                event.setCurrent(ge::Events::Event::DIED_EVENT);
-            }
-            // Revieved Event
-            else if (input.second.count(SDLK_r) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::REVIVED_EVENT");
-                event.setCurrent(ge::Events::Event::REVIVED_EVENT);
-            }
-            // Running attack
-            else if (input.second.count(SDLK_z) > 0 && input.second.count(SDLK_RIGHT) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::ATTACK_START");
-                event.setCurrent(ge::Events::Event::ATTACK_START_EVENT);
-            }
-            //Attack
-            else if (input.second.count(SDLK_z) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::ATTACK_START_EVENT");
-                event.setCurrent(ge::Events::Event::ATTACK_START_EVENT);
-            }
-            // Throw attack
-            else if (input.second.count(SDLK_x) > 0 && input.second.count(SDLK_RIGHT) > 0) 
-            {
-                //DEBUG_MSG("ge::Events::Event::THROW_START_EVENT");
-                event.setCurrent(ge::Events::Event::THROW_START_EVENT);
-            }
-            // Throw Attack
-            else if (input.second.count(SDLK_x) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::THROW_START_EVENT");
-                event.setCurrent(ge::Events::Event::THROW_START_EVENT);
-            }
-            // Run Right
-            else if (input.second.count(SDLK_RIGHT) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::RUN_RIGHT_START_EVENT");
-                event.setCurrent(ge::Events::Event::RUN_RIGHT_START_EVENT);
-            }
-            // Climb Up
-            else if (input.second.count(SDLK_UP) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::MOVE_UP_START_EVENT");
-                event.setCurrent(ge::Events::Event::MOVE_UP_START_EVENT);
-            }
-            // Climb Down
-            else if (input.second.count(SDLK_DOWN) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::MOVE_DOWN_START_EVENT");
-                event.setCurrent(ge::Events::Event::MOVE_DOWN_START_EVENT);
-            }
-            // Hit Bottom of Ladder Event
-            else if (input.second.count(SDLK_c) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::HIT_LADDER_BOTTOM_EVENT");
-                event.setCurrent(ge::Events::Event::HIT_LADDER_BOTTOM_EVENT);
-            }
-            // Hit Top of Ladder Event
-            else if (input.second.count(SDLK_t) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::HIT_LADDER_TOP_EVENT");
-                event.setCurrent(ge::Events::Event::HIT_LADDER_TOP_EVENT);
-            }
-            // Jump Run
-            if (input.second.count(SDLK_SPACE) > 0 && input.second.count(SDLK_RIGHT) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::JUMP_UP_EVENT");
-                event.setCurrent(ge::Events::Event::JUMP_UP_EVENT);
-            }
-            // Jump Event
-            else if (input.second.count(SDLK_SPACE) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::JUMP_UP_EVENT");
-                event.setCurrent(ge::Events::Event::JUMP_UP_EVENT);
-            }
-            // Running Slide
-            else if (input.second.count(SDLK_DOWN) > 0 && input.second.count(SDLK_RIGHT) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::SLIDE_EVENT");
-                event.setCurrent(ge::Events::Event::SLIDE_EVENT);
-            }
-            // Hit Ground Event
-            else if (input.second.count(SDLK_h) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::HIT_GROUND_EVENT");
-                event.setCurrent(ge::Events::Event::HIT_GROUND_EVENT);
-            }
+            case SDL_KEYDOWN:
+                event.setCurrent(handleKeyDown(e, keystate));
+                break;
 
-            // Jump Attack Event
-            else if (input.second.count(SDLK_h) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::HIT_GROUND_EVENT");
-                event.setCurrent(ge::Events::Event::HIT_GROUND_EVENT);
+            case SDL_KEYUP:
+                event.setCurrent(handleKeyUp(e, keystate));
+                break;
             }
-
-            // Jump Throw Attack Event
-            else if (input.second.count(SDLK_h) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::HIT_GROUND_EVENT");
-                event.setCurrent(ge::Events::Event::HIT_GROUND_EVENT);
-            }
-
-            break;
-        case SDL_KEYUP:
-
-            // Run and Stop Attack
-            if (input.second.count(SDLK_z) > 0 && input.second.count(SDLK_RIGHT) > 0) // If z is released and right is down.
-            {
-                //DEBUG_MSG("ge::Events::Event::RUN_RIGHT_START_EVENT");
-                event.setCurrent(ge::Events::Event::RUN_RIGHT_START_EVENT);
-            }
-            // Stop Attack
-            else if(input.second.count(SDLK_z) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::ATTACK_STOP_EVENT");
-                event.setCurrent(ge::Events::Event::ATTACK_STOP_EVENT);
-            }
-            // Run and Stop Throw Attack
-            else if (input.second.count(SDLK_z) > 0 && input.second.count(SDLK_RIGHT) > 0) // If x is released and right is down.
-            {
-                //DEBUG_MSG("ge::Events::Event::RUN_RIGHT_START_EVENT");
-                event.setCurrent(ge::Events::Event::RUN_RIGHT_START_EVENT);
-            }
-            // Stop Throw Attack
-            else if (input.second.count(SDLK_x) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::THROW_STOP_EVENT");
-                event.setCurrent(ge::Events::Event::THROW_STOP_EVENT);
-            }
-            // Stop Running Right
-            else if (input.second.count(SDLK_RIGHT) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::RUN_RIGHT_STOP_EVENT");
-                event.setCurrent(ge::Events::Event::RUN_RIGHT_STOP_EVENT);
-            }
-            // Stop Slide
-            else if (input.second.count(SDLK_DOWN) > 0 && input.second.count(SDLK_RIGHT) > 0) // If down released and right is down.
-            {
-                //DEBUG_MSG("ge::Events::Event::RUN_RIGHT_START_EVENT");
-                event.setCurrent(ge::Events::Event::RUN_RIGHT_START_EVENT);
-            }
-            // Stop Moving Up
-            else if (input.second.count(SDLK_UP) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::MOVE_UP_STOP_EVENT");
-                event.setCurrent(ge::Events::Event::MOVE_UP_STOP_EVENT);
-            }
-            // Stop Moving Down
-            else if (input.second.count(SDLK_DOWN) > 0)
-            {
-                //DEBUG_MSG("ge::Events::Event::MOVE_DOWN_STOP_EVENT");
-                event.setCurrent(ge::Events::Event::MOVE_DOWN_STOP_EVENT);
-            }
-
-            break;
-        
-        default:
-            //DEBUG_MSG("ge::Events::Event::NONE");
-            event.setCurrent(ge::Events::Event::NONE);
-            break;
         }
     }
 
@@ -271,4 +110,148 @@ void Game::cleanUp()
 
 	//Quit SDL subsystems
 	SDL_Quit();
+}
+
+ge::Events::Event Game::handleKeyDown(SDL_Event const & t_triggerEvent, Uint8 const * t_keystates)
+{
+    // Died Event
+    if (t_keystates[SDL_SCANCODE_D])
+    {
+        //DEBUG_MSG("ge::Events::Event::DIED_EVENT");
+        return ge::Events::Event::DIED_EVENT;
+    }
+    // Revieved Event
+    else if (t_keystates[SDL_SCANCODE_R])
+    {
+        //DEBUG_MSG("ge::Events::Event::REVIVED_EVENT");
+        return ge::Events::Event::REVIVED_EVENT;
+    }
+    //Attack
+    else if (t_keystates[SDL_SCANCODE_Z])
+    {
+        //DEBUG_MSG("ge::Events::Event::ATTACK_START_EVENT");
+        return ge::Events::Event::ATTACK_START_EVENT;
+    }
+    // Throw Attack
+    else if (t_keystates[SDL_SCANCODE_X])
+    {
+        //DEBUG_MSG("ge::Events::Event::THROW_START_EVENT");
+        return ge::Events::Event::THROW_START_EVENT;
+    }
+    // Jump Run
+    else if (t_keystates[SDL_SCANCODE_SPACE] && t_keystates[SDL_SCANCODE_RIGHT])
+    {
+        //DEBUG_MSG("ge::Events::Event::JUMP_UP_EVENT");
+        return ge::Events::Event::JUMP_UP_EVENT;
+    }
+    // Running Slide
+    else if (t_keystates[SDL_SCANCODE_DOWN] && t_keystates[SDL_SCANCODE_RIGHT])
+    {
+        //DEBUG_MSG("ge::Events::Event::SLIDE_EVENT");
+        return ge::Events::Event::SLIDE_EVENT;
+    }
+    // Jump Event
+    else if (t_keystates[SDL_SCANCODE_SPACE])
+    {
+        //DEBUG_MSG("ge::Events::Event::JUMP_UP_EVENT");
+        return ge::Events::Event::JUMP_UP_EVENT;
+    }
+    // Running Slide
+    else if (t_keystates[SDL_SCANCODE_DOWN] && t_keystates[SDL_SCANCODE_RIGHT])
+    {
+        //DEBUG_MSG("ge::Events::Event::SLIDE_EVENT");
+        return ge::Events::Event::SLIDE_EVENT;
+    }
+    // Hit Ground Event
+    else if (t_keystates[SDL_SCANCODE_H])
+    {
+        //DEBUG_MSG("ge::Events::Event::HIT_GROUND_EVENT");
+        return ge::Events::Event::HIT_GROUND_EVENT;
+    }
+    // Run Right
+    else if (t_keystates[SDL_SCANCODE_RIGHT])
+    {
+        //DEBUG_MSG("ge::Events::Event::RUN_RIGHT_START_EVENT");
+        return ge::Events::Event::RUN_RIGHT_START_EVENT;
+    }
+    // Climb Up
+    else if (t_keystates[SDL_SCANCODE_UP])
+    {
+        //DEBUG_MSG("ge::Events::Event::MOVE_UP_START_EVENT");
+        return ge::Events::Event::MOVE_UP_START_EVENT;
+    }
+    // Climb Down
+    else if (t_keystates[SDL_SCANCODE_DOWN])
+    {
+        //DEBUG_MSG("ge::Events::Event::MOVE_DOWN_START_EVENT");
+        return ge::Events::Event::MOVE_DOWN_START_EVENT;
+    }
+    // Hit Bottom of Ladder Event
+    else if (t_keystates[SDL_SCANCODE_C])
+    {
+        //DEBUG_MSG("ge::Events::Event::HIT_LADDER_BOTTOM_EVENT");
+        return ge::Events::Event::HIT_LADDER_BOTTOM_EVENT;
+    }
+    // Hit Top of Ladder Event
+    else if (t_keystates[SDL_SCANCODE_T])
+    {
+        //DEBUG_MSG("ge::Events::Event::HIT_LADDER_TOP_EVENT");
+        return ge::Events::Event::HIT_LADDER_TOP_EVENT;
+    }
+
+    return ge::Events::Event::NONE;
+}
+
+ge::Events::Event Game::handleKeyUp(SDL_Event const & t_triggerEvent, Uint8 const * t_keystates)
+{
+    // Run and Stop Attack
+    if (t_triggerEvent.key.keysym.sym == SDLK_z && t_keystates[SDL_SCANCODE_RIGHT]) // If z is released and right is down.
+    {
+        //DEBUG_MSG("ge::Events::Event::RUN_RIGHT_START_EVENT");
+        return ge::Events::Event::RUN_RIGHT_START_EVENT;
+    }
+    // Stop Attack
+    else if (t_triggerEvent.key.keysym.sym == SDLK_z)
+    {
+        //DEBUG_MSG("ge::Events::Event::ATTACK_STOP_EVENT");
+        return ge::Events::Event::ATTACK_STOP_EVENT;
+    }
+    // Run and Stop Throw Attack
+    else if (t_triggerEvent.key.keysym.sym == SDLK_x && t_keystates[SDL_SCANCODE_RIGHT]) // If x is released and right is down.
+    {
+        //DEBUG_MSG("ge::Events::Event::RUN_RIGHT_START_EVENT");
+        return ge::Events::Event::RUN_RIGHT_START_EVENT;
+    }
+    // Stop Throw Attack
+    else if (t_triggerEvent.key.keysym.sym == SDLK_x)
+    {
+        //DEBUG_MSG("ge::Events::Event::THROW_STOP_EVENT");
+        return ge::Events::Event::THROW_STOP_EVENT;
+    }
+    // Stop Running Right
+    else if (t_triggerEvent.key.keysym.sym == SDLK_RIGHT)
+    {
+        //DEBUG_MSG("ge::Events::Event::RUN_RIGHT_STOP_EVENT");
+        return ge::Events::Event::RUN_RIGHT_STOP_EVENT;
+    } 
+    // Stop Slide
+    else if (t_triggerEvent.key.keysym.sym == SDLK_DOWN && t_keystates[SDL_SCANCODE_RIGHT]) // If down released and right is down.
+    {
+        //DEBUG_MSG("ge::Events::Event::RUN_RIGHT_START_EVENT");
+        return ge::Events::Event::RUN_RIGHT_START_EVENT;
+    }
+    // Stop Moving Up
+    else if (t_triggerEvent.key.keysym.sym == SDLK_UP)
+    {
+        //DEBUG_MSG("ge::Events::Event::MOVE_UP_STOP_EVENT");
+        return ge::Events::Event::MOVE_UP_STOP_EVENT;
+    }
+    // Stop Moving Down
+    else if (t_triggerEvent.key.keysym.sym == SDLK_DOWN)
+    {
+        //DEBUG_MSG("ge::Events::Event::MOVE_DOWN_STOP_EVENT");
+        return ge::Events::Event::MOVE_DOWN_STOP_EVENT;
+    }
+
+    return ge::Events::Event::NONE;
 }

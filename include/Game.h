@@ -29,6 +29,9 @@ private:
 
     void cleanUp();
 
+    ge::Events::Event handleKeyDown(SDL_Event const & t_triggerEvent, Uint8 const * t_keystates);
+    ge::Events::Event handleKeyUp(SDL_Event const & t_triggerEvent, Uint8 const * t_keystates);
+
     bool m_isRunning;
 
     //Render Window
